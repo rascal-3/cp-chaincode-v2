@@ -1,18 +1,14 @@
 /*
 Copyright 2016 IBM
-
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 Licensed Materials - Property of IBM
 © Copyright IBM Corp. 2016
 */
@@ -26,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/hyperledger-archive/fabric/core/chaincode/shim"
 )
 
 var cpPrefix = "cp:"
@@ -102,8 +98,7 @@ type Transaction struct {
 	Discount    float64 `json:"discount"`
 }
 
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) ([]byte, error) {
-	//_, _ := stub.GetFunctionAndParameters()
+func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	// Initialize the collection of commercial paper keys
 	fmt.Println("Initializing paper keys collection")
 	var blank []string
@@ -117,7 +112,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) ([]byte, error)
 	return nil, nil
 }
 
-func (t *SimpleChaincode) createAccounts(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) createAccounts(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 
 	//  				0
 	// "number of accounts to create"
@@ -155,10 +150,7 @@ func (t *SimpleChaincode) createAccounts(stub shim.ChaincodeStubInterface, args 
 
 }
 
-func (t *SimpleChaincode) createAccount(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-
-	//
-
+func (t *SimpleChaincode) createAccount(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 	// Obtain the username to associate with the account
 	if len(args) != 1 {
 		fmt.Println("Error obtaining username")
@@ -221,9 +213,7 @@ func (t *SimpleChaincode) createAccount(stub shim.ChaincodeStubInterface, args [
 
 }
 
-func (t *SimpleChaincode) issueCommercialPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-
-	//
+func (t *SimpleChaincode) issueCommercialPaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 
 	/*		0
 		json
@@ -249,7 +239,6 @@ func (t *SimpleChaincode) issueCommercialPaper(stub shim.ChaincodeStubInterface,
 			],
 			"issuer":"company2",
 			"issueDate":"1456161763790"  (current time in milliseconds as a string)
-
 		}
 	*/
 	//need one arg
@@ -402,9 +391,7 @@ func (t *SimpleChaincode) issueCommercialPaper(stub shim.ChaincodeStubInterface,
 	}
 }
 
-func GetAllCPs(stub shim.ChaincodeStubInterface) ([]CP, error) {
-
-	//
+func GetAllCPs(stub *shim.ChaincodeStub) ([]CP, error) {
 
 	var allCPs []CP
 
@@ -439,10 +426,7 @@ func GetAllCPs(stub shim.ChaincodeStubInterface) ([]CP, error) {
 	return allCPs, nil
 }
 
-func GetCP(cpid string, stub shim.ChaincodeStubInterface) (CP, error) {
-
-	//
-
+func GetCP(cpid string, stub *shim.ChaincodeStub) (CP, error) {
 	var cp CP
 
 	cpBytes, err := stub.GetState(cpid)
@@ -460,7 +444,7 @@ func GetCP(cpid string, stub shim.ChaincodeStubInterface) (CP, error) {
 	return cp, nil
 }
 
-func GetCompany(companyID string, stub shim.ChaincodeStubInterface) (Account, error) {
+func GetCompany(companyID string, stub *shim.ChaincodeStub) (Account, error) {
 	var company Account
 	companyBytes, err := stub.GetState(accountPrefix + companyID)
 	if err != nil {
@@ -478,8 +462,7 @@ func GetCompany(companyID string, stub shim.ChaincodeStubInterface) (Account, er
 }
 
 // Still working on this one
-func (t *SimpleChaincode) transferPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	//_, args := stub.GetFunctionAndParameters()
+func (t *SimpleChaincode) transferPaper(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 	/*		0
 		json
 	  	{
@@ -657,8 +640,7 @@ func (t *SimpleChaincode) transferPaper(stub shim.ChaincodeStubInterface, args [
 	return nil, nil
 }
 
-func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface) ([]byte, error) {
-	function, args := stub.GetFunctionAndParameters()
+func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	//need one arg
 	if len(args) < 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting ......")
@@ -723,14 +705,12 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface) ([]byte, error
 	}
 }
 
-func (t *SimpleChaincode) Run(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Run(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("run is running " + function)
 	return t.Invoke(stub, function, args)
 }
 
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) {
-
-	function, args := stub.GetFunctionAndParameters()
+func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
 
 	if function == "issueCommercialPaper" {
