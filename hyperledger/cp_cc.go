@@ -119,7 +119,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) ([]byte, error)
 
 func (t *SimpleChaincode) createAccounts(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-	_, args := stub.GetFunctionAndParameters()
 	//  				0
 	// "number of accounts to create"
 	var err error
@@ -158,7 +157,7 @@ func (t *SimpleChaincode) createAccounts(stub shim.ChaincodeStubInterface, args 
 
 func (t *SimpleChaincode) createAccount(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-	_, args := stub.GetFunctionAndParameters()
+	//
 
 	// Obtain the username to associate with the account
 	if len(args) != 1 {
@@ -224,7 +223,7 @@ func (t *SimpleChaincode) createAccount(stub shim.ChaincodeStubInterface, args [
 
 func (t *SimpleChaincode) issueCommercialPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-	_, args := stub.GetFunctionAndParameters()
+	//
 
 	/*		0
 		json
@@ -405,7 +404,7 @@ func (t *SimpleChaincode) issueCommercialPaper(stub shim.ChaincodeStubInterface,
 
 func GetAllCPs(stub shim.ChaincodeStubInterface) ([]CP, error) {
 
-	_, args := stub.GetFunctionAndParameters()
+	//
 
 	var allCPs []CP
 
@@ -442,7 +441,7 @@ func GetAllCPs(stub shim.ChaincodeStubInterface) ([]CP, error) {
 
 func GetCP(cpid string, stub shim.ChaincodeStubInterface) (CP, error) {
 
-	_, args := stub.GetFunctionAndParameters()
+	//
 
 	var cp CP
 
@@ -659,7 +658,7 @@ func (t *SimpleChaincode) transferPaper(stub shim.ChaincodeStubInterface, args [
 }
 
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface) ([]byte, error) {
-	args := stub.GetStringArgs()
+	function, args := stub.GetFunctionAndParameters()
 	//need one arg
 	if len(args) < 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting ......")
@@ -731,8 +730,7 @@ func (t *SimpleChaincode) Run(stub shim.ChaincodeStubInterface, function string,
 
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) {
 
-	function := stub.function()
-	args := stub.GetArgs()
+	function, args := stub.GetFunctionAndParameters()
 	fmt.Println("invoke is running " + function)
 
 	if function == "issueCommercialPaper" {
